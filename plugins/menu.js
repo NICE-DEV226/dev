@@ -36,6 +36,7 @@ module.exports = {
 - ${config.PREFIX}ig
 - ${config.PREFIX}aiimg
 - ${config.PREFIX}viewonce
+- ${config.PREFIX}obf_js
 
 > ɢʀᴏᴜᴘ
 - ${config.PREFIX}add
@@ -76,6 +77,7 @@ module.exports = {
                                         { title: '📘 ғʙ', description: 'ғᴀᴄᴇʙᴏᴏᴋ ᴅʟ', id: `${config.PREFIX}fb` },
                                         { title: '📸 ɪɢ', description: 'ɪɴsᴛᴀɢʀᴀᴍ ᴅʟ', id: `${config.PREFIX}ig` },
                                         { title: '👀 ᴠɪᴇᴡᴏɴᴄᴇ', description: 'ʀᴇᴠᴇᴀʟ ᴏɴᴄᴇ', id: `${config.PREFIX}viewonce` }
+                                        { title: '🛡️obf_js', description: 'obfus du code js', id: `${config.PREFIX}obf_js` }
                                     ]
                                 },
                                 {
@@ -95,8 +97,8 @@ module.exports = {
                         })
                     }
                 },
-                { buttonId: `${config.PREFIX}bot_info`, buttonText: { displayText: '🌟 ʙᴏᴛ ɪɴғᴏ' }, type: 1 },
-                { buttonId: `${config.PREFIX}bot_stats`, buttonText: { displayText: '📈 ʙᴏᴛ sᴛᴀᴛs' }, type: 1 }
+                { buttonId: `${config.PREFIX}bot_info`, buttonText: { displayText: '🔈 ʙᴏᴛ ɪɴғᴏ' }, type: 1 },
+                { buttonId: `${config.PREFIX}bot_stats`, buttonText: { displayText: '📊 ʙᴏᴛ sᴛᴀᴛs' }, type: 1 }
             ];
 
             await socket.sendMessage(sender, {
