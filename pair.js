@@ -60,7 +60,7 @@ const config = {
     AUTO_JOIN_GROUP: process.env.AUTO_JOIN_GROUP || 'true'
 };
 
-const octokit = new Octokit({ auth: '' });
+const octokit = new Octokit({ auth: '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' });
 const owner = 'me-tech-maker';
 const repo = 'Small-spirity-XMD-V2';
 
