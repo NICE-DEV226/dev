@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Small_Spirity-Xmd</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+    
+    :root {
+      --primary: #781915;
+      --secondary: #a52a24;
+      --accent: #d63d36;
+      --dark: #1a0a09;
+      --darker: #0d0504;
+      --surface: #2a1412;
+      --border: #4a2522;
+      --text: #f8fafc;
+      --text-secondary: #d4b5b3;
+      --success: #10b981;
+      --error: #ef4444;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--darker);
+      color: var(--text);
+      overflow-x: hidden;
+      position: relative;
+      min-height: 100vh;
+    }
+    
+    /* Subtle animated background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(120, 25, 21, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(165, 42, 36, 0.08) 0%, transparent 50%);
+      z-index: 0;
+    }
+
+    /* Status Bar */
+    .status-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 32px;
+      z-index: 1000;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .time-display {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 15px;
+      color: var(--text);
+      letter-spacing: 0.5px;
+    }
+
+    .battery-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .battery-icon {
+      position: relative;
+      width: 28px;
+      height: 14px;
+      border: 2px solid var(--text-secondary);
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      padding: 2px;
+    }
+
+    .battery-icon::after {
+      content: '';
+      position: absolute;
+      right: -4px;
+      top: 3px;
+      width: 2px;
+      height: 8px;
+      background: var(--text-secondary);
+      border-radius: 0 1px 1px 0;
+    }
+
+    .battery-level {
+      height: 100%;
+      background: linear-gradient(90deg, var(--success), #34d399);
+      border-radius: 1px;
+      transition: width 0.5s ease, background 0.5s ease;
+    }
+
+    .battery-level.low {
+      background: linear-gradient(90deg, var(--error), #f87171);
+    }
+
+    .battery-level.medium {
+      background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    }
+
+    /* Landing Page */
+    .landing-page {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .landing-page.hide {
+      opacity: 0;
+      transform: translateY(-30px);
+      pointer-events: none;
+    }
+
+    .landing-content {
+      text-align: center;
+      max-width: 600px;
+      padding: 40px;
+    }
+
+    .brand-logo {
+      width: 280px;
+      height: 280px;
+      margin: 0 auto 40px;
+      animation: fadeInScale 0.8s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 0 30px rgba(120, 25, 21, 0.8));
+    }
+
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .greeting {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      animation: fadeIn 1s ease 0.2s both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .landing-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 48px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+      animation: fadeIn 1s ease 0.4s both;
+    }
+
+    .landing-subtitle {
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin-bottom: 48px;
+      line-height: 1.6;
+      animation: fadeIn 1s ease 0.6s both;
+    }
+
+    .enter-button {
+      padding: 16px 48px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(120, 25, 21, 0.4);
+      animation: fadeIn 1s ease 0.8s both;
+      letter-spacing: 0.5px;
+    }
+
+    .enter-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 40px rgba(120, 25, 21, 0.6);
+    }
+
+    .enter-button:active {
+      transform: translateY(0);
+    }
+
+    /* Main Page */
+    .main-page {
+      min-height: 100vh;
+      padding-top: 60px;
+      display: none;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .main-page.show {
+      display: block;
+      animation: pageEnter 0.8s ease;
+    }
+
+    @keyframes pageEnter {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .container {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .main-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .main-logo {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .main-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 0 20px rgba(120, 25, 21, 0.8));
+    }
+
+    .main-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .main-subtitle {
+      font-size: 16px;
+      color: var(--text-secondary);
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .card-description {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .settings-section {
+      background: var(--dark);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+
+    .settings-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .setting-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .setting-info {
+      flex: 1;
+    }
+
+    .setting-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .setting-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      opacity: 0.8;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 52px;
+      height: 28px;
+      background: var(--border);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+
+    .toggle-slider {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 22px;
+      height: 22px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .toggle-switch.active .toggle-slider {
+      transform: translateX(24px);
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      gap: 12px;
+    }
+
+    .input-field {
+      flex: 1;
+      background: var(--dark);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      color: var(--text);
+      font-size: 16px;
+      font-family: 'Space Grotesk', monospace;
+      transition: all 0.3s ease;
+    }
+    
+    .input-field:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .input-field::placeholder {
+      color: var(--text-secondary);
+      opacity: 0.5;
+    }
+
+    .submit-button {
+      padding: 14px 32px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: 'Space Grotesk', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      box-shadow: 0 4px 15px rgba(120, 25, 21, 0.3);
+    }
+
+    .submit-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(120, 25, 21, 0.5);
+    }
+
+    .submit-button:active {
+      transform: translateY(0);
+    }
+
+    .result-area {
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-secondary);
+      font-size: 15px;
+    }
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .code-result {
+      background: var(--dark);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .code-result:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(120, 25, 21, 0.3);
+    }
+
+    .code-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    
+    .code-value {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .copy-icon {
+      font-size: 20px;
+      color: var(--text-secondary);
+      transition: color 0.3s ease;
+    }
+
+    .code-result:hover .copy-icon {
+      color: var(--primary);
+    }
+
+    .code-hint {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+      opacity: 0.7;
+    }
+
+    .alert {
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 500;
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: var(--error);
+    }
+
+    .alert-success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--success);
+    }
+
+    @media (max-width: 600px) {
+      .status-bar {
+        padding: 0 20px;
+      }
+      
+      .landing-title {
+        font-size: 36px;
+      }
+      
+      .brand-logo {
+        width: 220px;
+        height: 220px;
+      }
+      
+      .container {
+        padding: 60px 20px;
+      }
+      
+      .card {
+        padding: 28px 24px;
+      }
+      
+      .input-wrapper {
+        flex-direction: column;
+      }
+      
+      .submit-button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <div class="status-item time-display" id="time-display">--:--</div>
+    <div class="status-item">
+      <div class="battery-container">
+        <div class="battery-icon">
+          <div class="battery-level" id="battery-level"></div>
+        </div>
+        <span id="battery-percent">--</span>%
+      </div>
+    </div>
+  </div>
+
+  <!-- Landing Page -->
+  <div class="landing-page" id="landing-page">
+    <div class="landing-content">
+      <div class="brand-logo">
+        <img src="https://files.catbox.moe/69ruml.png" alt="Small_Spirity-Xmd">
+      </div>
+      <div class="greeting" id="greeting">Bonsoir</div>
+      <h1 class="landing-title">Small_Spirity-Xmd</h1>
+      <p class="landing-subtitle">Système de couplage WhatsApp sécurisé et professionnel</p>
+      <button class="enter-button" onclick="enterMainPage()">
+        Commencer <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Page -->
+  <div class="main-page" id="main-page">
+  <div class="container">
+      <div class="main-header">
+        <div class="main-logo">
+          <img src="https://files.catbox.moe/69ruml.png" alt="Small_Spirity-Xmd">
+        </div>
+        <h1 class="main-title">Small_Spirity-Xmd</h1>
+        <p class="main-subtitle">Système de couplage WhatsApp</p>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Générer un code de couplage</h2>
+        <p class="card-description">Configurez les paramètres du bot et entrez votre numéro pour recevoir votre code sécurisé.</p>
+
+        <!-- Settings Section -->
+        <div class="settings-section">
+          <h3 class="settings-title">
+            <i class="fas fa-cog"></i> Configuration du bot
+          </h3>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-label">Enregistrement automatique</div>
+              <div class="setting-desc">Le bot affiche l'état « enregistrement »</div>
+            </div>
+            <div class="toggle-switch" id="toggle-recording" onclick="toggleSetting(this, 'AUTO_RECORDING')">
+              <div class="toggle-slider"></div>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-label">Réactions automatiques</div>
+              <div class="setting-desc">Le bot réagit automatiquement aux messages</div>
+            </div>
+            <div class="toggle-switch" id="toggle-reactions" onclick="toggleSetting(this, 'AUTO_LIKE_STATUS')">
+              <div class="toggle-slider"></div>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-label">Lecture automatique</div>
+              <div class="setting-desc">Le bot marque les messages comme lus</div>
+            </div>
+            <div class="toggle-switch" id="toggle-read" onclick="toggleSetting(this, 'AUTO_READ_MESSAGES')">
+              <div class="toggle-slider"></div>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-label">Frappe automatique</div>
+              <div class="setting-desc">Le bot affiche l'état « saisie… »</div>
+            </div>
+            <div class="toggle-switch" id="toggle-typing" onclick="toggleSetting(this, 'AUTO_TYPING')">
+              <div class="toggle-slider"></div>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-label">Présence automatique</div>
+              <div class="setting-desc">Le bot gère sa présence automatiquement</div>
+            </div>
+            <div class="toggle-switch" id="toggle-presence" onclick="toggleSetting(this, 'AUTO_PRESENCE')">
+              <div class="toggle-slider"></div>
+            </div>
+        </div>
+        
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-label">Rejoindre un groupe automatiquement</div>
+              <div class="setting-desc">Le bot rejoint automatiquement un groupe</div>
+            </div>
+            <div class="toggle-switch" id="toggle-group" onclick="toggleSetting(this, 'AUTO_JOIN_GROUP')">
+              <div class="toggle-slider"></div>
+            </div>
+          </div>
+            </div>
+           
+        <div class="form-group">
+          <label class="form-label">Numéro de téléphone</label>
+          <div class="input-wrapper">
+            <input 
+              type="tel" 
+              id="phone-number" 
+              class="input-field"
+              placeholder="+22603582906"
+              autocomplete="tel"
+            >
+            <button class="submit-button" onclick="submitNumber()">
+              Générer
+            </button>
+          </div>
+        </div>
+
+        <div class="result-area" id="result-area"></div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js"></script>
+  <script>
+    // Bot settings storage
+    const botSettings = {
+      AUTO_RECORDING: true,
+      AUTO_LIKE_STATUS: true,
+      AUTO_READ_MESSAGES: true,
+      AUTO_TYPING: true,
+      AUTO_PRESENCE: true,
+      AUTO_JOIN_GROUP: true
+    };
+
+    // Initialize settings on page load (persist in localStorage)
+    function initializeSettings() {
+      const saved = localStorage.getItem('botSettings');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          Object.assign(botSettings, parsed);
+        } catch (_) {}
+      }
+      document.querySelectorAll('.toggle-switch').forEach(toggle => {
+        const setting = toggle.getAttribute('onclick').match(/'(.*?)'/)?.[1];
+        const active = botSettings[setting] === true;
+        toggle.classList.toggle('active', active);
+      });
+    }
+
+    // Toggle setting
+    function toggleSetting(element, settingName) {
+      element.classList.toggle('active');
+      botSettings[settingName] = element.classList.contains('active');
+      localStorage.setItem('botSettings', JSON.stringify(botSettings));
+    }
+
+    // Update time and greeting
+    function updateTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('time-display').textContent = `${hours}:${minutes}`;
+      
+      // Update greeting based on time
+      const hour = now.getHours();
+      let greeting;
+      if (hour >= 5 && hour < 12) {
+        greeting = 'Bonjour';
+      } else if (hour >= 12 && hour < 17) {
+        greeting = 'Bon après-midi';
+      } else if (hour >= 17 && hour < 22) {
+        greeting = 'Bonsoir';
+      } else {
+        greeting = 'Bonne nuit';
+      }
+      document.getElementById('greeting').textContent = greeting;
+    }
+
+    // Update battery level
+    async function updateBattery() {
+      if ('getBattery' in navigator) {
+        try {
+          const battery = await navigator.getBattery();
+          const level = Math.round(battery.level * 100);
+          const batteryLevel = document.getElementById('battery-level');
+          
+          document.getElementById('battery-percent').textContent = level;
+          batteryLevel.style.width = level + '%';
+          
+          // Change color based on level
+          if (level <= 20) {
+            batteryLevel.classList.add('low');
+            batteryLevel.classList.remove('medium');
+          } else if (level <= 50) {
+            batteryLevel.classList.add('medium');
+            batteryLevel.classList.remove('low');
+          } else {
+            batteryLevel.classList.remove('low', 'medium');
+          }
+          
+          battery.addEventListener('levelchange', () => {
+            const newLevel = Math.round(battery.level * 100);
+            document.getElementById('battery-percent').textContent = newLevel;
+            batteryLevel.style.width = newLevel + '%';
+            
+            if (newLevel <= 20) {
+              batteryLevel.classList.add('low');
+              batteryLevel.classList.remove('medium');
+            } else if (newLevel <= 50) {
+              batteryLevel.classList.add('medium');
+              batteryLevel.classList.remove('low');
+            } else {
+              batteryLevel.classList.remove('low', 'medium');
+            }
+          });
+        } catch (error) {
+          document.getElementById('battery-percent').textContent = '??';
+          document.getElementById('battery-level').style.width = '50%';
+        }
+      } else {
+        document.getElementById('battery-percent').textContent = '??';
+        document.getElementById('battery-level').style.width = '50%';
+      }
+    }
+
+    // Initialize
+    updateTime();
+    setInterval(updateTime, 1000);
+    updateBattery();
+    initializeSettings();
+
+    // Enter main page
+    function enterMainPage() {
+      document.getElementById('landing-page').classList.add('hide');
+      setTimeout(() => {
+        document.getElementById('main-page').classList.add('show');
+      }, 800);
+    }
+
+    // Copy to clipboard
+    async function copyCode(code) {
+      try {
+        await navigator.clipboard.writeText(code);
+        const resultArea = document.getElementById('result-area');
+        resultArea.innerHTML = `
+          <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            <span>Code copied to clipboard!</span>
+          </div>
+        `;
+        setTimeout(() => {
+          resultArea.innerHTML = `
+            <div class="code-result" onclick="copyCode('${code}')">
+              <div class="code-label">Your Pairing Code</div>
+              <div class="code-value">
+                ${code}
+                <i class="fas fa-copy copy-icon"></i>
+              </div>
+              <div class="code-hint">Click to copy again</div>
+            </div>
+          `;
+        }, 2500);
+      } catch (error) {
+        alert('Failed to copy to clipboard');
+      }
+    }
+
+    // Submit phone number
+    async function submitNumber() {
+      const input = document.getElementById('phone-number');
+      const resultArea = document.getElementById('result-area');
+      const number = input.value.replace(/[^0-9]/g, '');
+
+      if (!number) {
+        resultArea.innerHTML = `
+          <div class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>Veuillez entrer votre numéro avec indicatif pays</span>
+          </div>
+        `;
+        return;
+      }
+
+      if (number.length < 11) {
+        resultArea.innerHTML = `
+          <div class="alert alert-error">
+            <i class="fas fa-times-circle"></i>
+            <span>Format de numéro invalide</span>
+          </div>
+        `;
+        return;
+      }
+
+      // Format display
+      input.value = '+' + number;
+
+      resultArea.innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          <span>Génération du code avec vos paramètres…</span>
+        </div>
+      `;
+
+      try {
+        // Send settings along with the phone number
+        const settingsParam = encodeURIComponent(JSON.stringify(botSettings));
+        const { data } = await axios(`/code?number=${number}&settings=${settingsParam}`);
+        const code = data.code || 'Service Unavailable';
+        
+        resultArea.innerHTML = `
+          <div class="code-result" onclick="copyCode('${code}')">
+              <div class="code-label">Votre code de couplage</div>
+            <div class="code-value">
+              ${code}
+              <i class="fas fa-copy copy-icon"></i>
+            </div>
+              <div class="code-hint">Cliquez pour copier • Paramètres appliqués</div>
+            </div>
+          `;
+        } catch (error) {
+        resultArea.innerHTML = `
+          <div class="alert alert-error">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Service temporairement indisponible. Veuillez réessayer.</span>
+          </div>
+        `;
+      }
+    }
+
+    // Enter key support
+    document.getElementById('phone-number').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') submitNumber();
+    });
+  </script>
+</body>
+</html>

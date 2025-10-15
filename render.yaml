@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: small-spirity-xmd
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 8000
+      - key: PM2_NAME
+        value: Small-spirity-XMD-V2-main
+      - key: RENDER
+        value: true
+      - key: TZ
+        value: Africa/Nairobi
+    autoDeploy: true
+    branch: main
